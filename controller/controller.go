@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"http_req/middleware"
 	"http_req/model"
 	"io/ioutil"
 	"net/http"
@@ -12,6 +13,9 @@ import (
 )
 
 func GetUrl(c *gin.Context) {
+	if !middleware.Auth(c) {
+		return
+	}
 	var result []model.Data
 	res, err := http.Get("https://jsonplaceholder.typicode.com/posts")
 	if err != nil {
@@ -37,6 +41,9 @@ func GetUrl(c *gin.Context) {
 }
 
 func GetUrlID(c *gin.Context) {
+	if !middleware.Auth(c) {
+		return
+	}
 	var result model.Data
 	var ID = c.Param("id")
 	res, err := http.Get("https://jsonplaceholder.typicode.com/posts/" + ID)
@@ -63,6 +70,9 @@ func GetUrlID(c *gin.Context) {
 }
 
 func PostUrl(c *gin.Context) {
+	if !middleware.Auth(c) {
+		return
+	}
 	var data model.Data
 	if err := c.ShouldBindJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
